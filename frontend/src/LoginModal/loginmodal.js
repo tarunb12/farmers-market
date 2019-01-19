@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { ControlLabel, FormControl, FormGroup, Modal } from 'react-bootstrap';
+import { Button, ControlLabel, FormControl, FormGroup, Modal } from 'react-bootstrap';
+import axios from 'axios';
 
 class LoginModal extends Component {
     constructor() {
@@ -24,6 +25,17 @@ class LoginModal extends Component {
         });
     }
 
+    handleSubmit = () => {
+        console.log('send email/pass info');
+        const loginInfo = {
+            email: this.state.fieldValues.get('email') || '',
+            password: this.state.fieldValues.get('password') || ''
+        }
+        console.log(loginInfo);
+        axios.get('http://127.0.0.1:5000/hello')
+        .then(res => console.log(res));
+    }
+
     handleEmailChange = event => {
         let { fieldValues } = this.state;
         fieldValues.set('email', event.target.value);
@@ -34,6 +46,11 @@ class LoginModal extends Component {
         let { fieldValues } = this.state;
         fieldValues.set('password', event.target.value);
         this.setState({ fieldValues });
+        console.log(event.target.value);
+    }
+
+    getFormValidationState = () => {
+        console.log(this.state.fieldValues.get('email') || '');
     }
 
     render() {
@@ -46,7 +63,7 @@ class LoginModal extends Component {
                     <form>
                         <FormGroup controlId='emailAddress'>
                             <ControlLabel>Email Address</ControlLabel>
-                            <FormControl type='text' value={this.state.fieldValues.get('email') || ''} placeholder='Enter E-mail Address' onChange={this.handleEmailChange} />
+                            <FormControl type='text' value={this.state.fieldValues.get('email') || ''} placeholder='Enter E-mail Address' onChange={this.handleEmailChange} pattern={/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum)\b/} />
                         </FormGroup>
                         <FormGroup controlId='password'>
                             <ControlLabel>Password</ControlLabel>
@@ -54,6 +71,10 @@ class LoginModal extends Component {
                         </FormGroup>
                     </form>
                 </Modal.Body>
+                <Modal.Footer>
+                    <Button bsStyle='primary' onClick={this.handleClose} className='closeButton pull-left'>Close</Button>
+                    <Button bsStyle='primary' onClick={this.handleSubmit} className='submitButton pull-right'>Enter</Button>
+                </Modal.Footer>
             </Modal>
         );
     }
